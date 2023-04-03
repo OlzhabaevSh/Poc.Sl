@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F4BF2586-2409-48A4-B26F-3DDB404F302B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9A0C837F-CE36-4407-9B8F-E19125E61782}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Poc.Sl.HttpSenderApp", "src\Poc.Sl.HttpSenderApp\Poc.Sl.HttpSenderApp.csproj", "{309A7093-5F0F-4EEF-AFC9-1B75B070FE50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poc.Sl.LoggerApp", "src\Poc.Sl.LoggerApp\Poc.Sl.LoggerApp.csproj", "{B24B42AA-3613-49A3-9292-9F976085246F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BB5CC7CB-4038-411E-A139-ED1778699EB1}"
+	ProjectSection(SolutionItems) = preProject
+		ReadMe.md = ReadMe.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{309A7093-5F0F-4EEF-AFC9-1B75B070FE50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{309A7093-5F0F-4EEF-AFC9-1B75B070FE50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{309A7093-5F0F-4EEF-AFC9-1B75B070FE50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{309A7093-5F0F-4EEF-AFC9-1B75B070FE50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B24B42AA-3613-49A3-9292-9F976085246F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B24B42AA-3613-49A3-9292-9F976085246F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B24B42AA-3613-49A3-9292-9F976085246F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B24B42AA-3613-49A3-9292-9F976085246F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{309A7093-5F0F-4EEF-AFC9-1B75B070FE50} = {F4BF2586-2409-48A4-B26F-3DDB404F302B}
+		{B24B42AA-3613-49A3-9292-9F976085246F} = {F4BF2586-2409-48A4-B26F-3DDB404F302B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B42704B1-255E-4A14-A1D3-54BFBF017DBE}
+	EndGlobalSection
+EndGlobal
