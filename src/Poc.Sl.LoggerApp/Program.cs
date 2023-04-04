@@ -38,25 +38,17 @@ var client = new DiagnosticsClient(processId);
 using EventPipeSession session = client.StartEventPipeSession(providers, false);
 using var source = new EventPipeEventSource(session.EventStream);
 
-var logs = new List<TraceEvent>();
-
 source.Dynamic.All += (TraceEvent obj) =>
 {
     var loggerName = obj.PayloadByName("LoggerName")?.ToString();
 
     if (loggerName == "System.Net.Http.HttpClient.Default.ClientHandler")
     {
-        // get request url
-        var requestUrl = obj.PayloadByName("RequestUrl")?.ToString();
-
-        // get request headers
-        var requestHeaders = obj.PayloadByName("RequestHeaders")?.ToString();
-
-        logs.Add(obj);
+        // process http client request/response logs
     }
     else if (loggerName == "Microsoft.AspNetCore.HttpLogging.HttpLoggingMiddleware") 
     {
-        logs.Add(obj);
+        // process asp.net core request/response logs
     }
 };
 
@@ -68,7 +60,5 @@ catch (Exception ex)
 {
     Console.Error.WriteLine(ex.ToString());
 }
-
-var res = logs.ToArray();
 
 Console.ReadKey();
