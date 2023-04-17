@@ -9,7 +9,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // add http client and httplogger
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("bingClient", httpClient => 
+{
+    httpClient.DefaultRequestHeaders.Add("my-custom-header", "my-value");
+});
+
+builder.Services.AddHttpClient("multipleClient", httpClient =>
+{
+    httpClient.DefaultRequestHeaders.Add("my-custom-header-1", "my-value-1");
+    httpClient.DefaultRequestHeaders.Add("my-custom-header-2", "my-value-2");
+    httpClient.DefaultRequestHeaders.Add("my-custom-header-3", "my-value-3");
+});
+
 builder.Services.AddHttpLogging(options => 
 {
     options.LoggingFields = HttpLoggingFields.All;
@@ -28,8 +39,10 @@ app.UseHttpLogging();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/bing", async (HttpClient httpClient) =>
+app.MapGet("/bing", async (IHttpClientFactory factory) =>
 {
+    var httpClient = factory.CreateClient("bingClient");
+
     httpClient.DefaultRequestHeaders.Add("my-custom-header", "my-value");
 
     // make http get request to bing
@@ -47,8 +60,10 @@ app.MapGet("/bing", async (HttpClient httpClient) =>
 });
 
 
-app.MapGet("/bing-and-google", async (HttpClient httpClient) =>
+app.MapGet("/bing-and-google", async (IHttpClientFactory factory) =>
 {
+    var httpClient = factory.CreateClient("multipleClient");
+
     httpClient.DefaultRequestHeaders.Add("my-custom-header-1", "my-value-1");
     httpClient.DefaultRequestHeaders.Add("my-custom-header-2", "my-value-2");
     httpClient.DefaultRequestHeaders.Add("my-custom-header-3", "my-value-3");

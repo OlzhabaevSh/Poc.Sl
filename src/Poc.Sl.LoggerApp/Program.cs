@@ -1,11 +1,8 @@
 ﻿using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Tracing;
-using Poc.Sl.LoggerApp;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
 using System.Diagnostics.Tracing;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 var processName = "Poc.Sl.HttpSenderApp";
 
@@ -29,13 +26,13 @@ var providers = new List<EventPipeProvider>()
         EventLevel.LogAlways,
         long.MaxValue),
     new EventPipeProvider(
-        "System.Net.Http",
+        "System-Net-Http",
         EventLevel.LogAlways,
         long.MaxValue),
-    new EventPipeProvider(
-        "Microsoft.AspNetCore.HttpLogging",
-        EventLevel.LogAlways,
-        long.MaxValue),
+    //new EventPipeProvider(
+    //    "Microsoft.AspNetCore.HttpLogging",
+    //    EventLevel.LogAlways,
+    //    long.MaxValue),
 };
 
 var client = new DiagnosticsClient(processId);
@@ -51,7 +48,8 @@ source.Dynamic.All += (TraceEvent obj) =>
     // to fix it we need to:
     // check if loggerName contains "System.Net.Http.HttpClient" and "LogicalHandler"
     // another way is create a regex
-    if (loggerName == "System.Net.Http.HttpClient.Default.LogicalHandler")
+    if (loggerName.Contains("System.Net.Http.HttpClient")
+        && loggerName.Contains("ClientHandler"))
     {
         if (obj.EventName != "MessageJson") 
         {
