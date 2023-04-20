@@ -5,13 +5,13 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Diagnostics.Tracing;
+using Poc.Sl.LoggerApp.AspnetCores;
+using Poc.Sl.LoggerApp.HttpClients;
 
-namespace Poc.Sl.LoggerApp
+namespace Poc.Sl.LoggerApp.Core
 {
     internal static class TraceEventParserHelper
     {
-        //public static string EventName => "MessageJson";
-
         public static void Parse(TraceEvent traceEvent)
         {
             var loggerName = traceEvent.PayloadByName("LoggerName")?.ToString();
@@ -29,14 +29,16 @@ namespace Poc.Sl.LoggerApp
                 && loggerName.Contains(HttpClientEventParserHelper.LoggerNameEnd)
                 && traceEvent.EventName == HttpClientEventParserHelper.EventName)
             {
+                Console.WriteLine($"{traceEvent.Keywords} | {loggerName}");
                 HttpClientEventParserHelper.Parse(traceEvent);
             }
-            else if (FeatureFlags.UseAspnetCore 
+            else if (FeatureFlags.UseAspnetCore
                 && loggerName == AspnetCoreEventParserHelper.LoggerName
                 && traceEvent.EventName == AspnetCoreEventParserHelper.EventName)
             {
+                Console.WriteLine($"{traceEvent.Keywords} | {loggerName}");
                 AspnetCoreEventParserHelper.Parse(traceEvent);
             }
-        }   
+        }
     }
 }

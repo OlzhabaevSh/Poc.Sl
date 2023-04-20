@@ -1,6 +1,7 @@
 ﻿using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Tracing;
 using Poc.Sl.LoggerApp;
+using Poc.Sl.LoggerApp.Core;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using System.Text.Json;

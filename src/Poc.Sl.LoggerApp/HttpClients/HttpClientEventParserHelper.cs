@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Diagnostics.Tracing;
+using Poc.Sl.LoggerApp.Core;
 
-namespace Poc.Sl.LoggerApp
+namespace Poc.Sl.LoggerApp.HttpClients
 {
     internal static class HttpClientEventParserHelper
     {
@@ -21,11 +23,11 @@ namespace Poc.Sl.LoggerApp
         public static string LoggerNameEnd => "LogicalHandler";
 
         /// <summary>
-        /// MessageJson
+        /// MessageJson. keyward 263882790666248
         /// </summary>
         public static string EventName => "MessageJson";
 
-        public static void Parse(TraceEvent traceEvent) 
+        public static void Parse(TraceEvent traceEvent)
         {
             var eventId = Convert.ToInt32(traceEvent.PayloadByName("EventId"));
             var eventName = traceEvent.PayloadByName("EventName")?.ToString();
@@ -34,64 +36,96 @@ namespace Poc.Sl.LoggerApp
             // traceEvent.ActivityID - is correlation id.
             // IMPORTANT:
             // in debug mode, ActivityID will be not correct for eventId 101 and 103
-            Console.WriteLine($"{traceEvent.ActivityID} | {eventName}");
+            Debug.WriteLine($"{traceEvent.ActivityID} | {eventName}");
+
+            BaseEvent be;
+
             if (eventId == 100)
-                HttpClientEventParserHelper.ParseRequestPipelineStart(traceEvent);
+                be = ParseRequestPipelineStart(traceEvent);
             else if (eventId == 101)
-                HttpClientEventParserHelper.ParseRequestPipelineEnd(traceEvent);
+                be = ParseRequestPipelineEnd(traceEvent);
             else if (eventId == 102)
-                HttpClientEventParserHelper.ParseRequestPipelineRequestHeader(traceEvent);
+                be = ParseRequestPipelineRequestHeader(traceEvent);
             else if (eventId == 103)
-                HttpClientEventParserHelper.ParseRequestPipelineResponseHeader(traceEvent);
+                be = ParseRequestPipelineResponseHeader(traceEvent);
+
+            // send notification
         }
 
         /// <summary>
         /// eventId 100 - eventName RequestPipelineStart
         /// </summary>
         /// <param name="traceEvent"></param>
-        public static void ParseRequestPipelineStart(TraceEvent traceEvent)
+        public static RequestPipelineStartEvent ParseRequestPipelineStart(TraceEvent traceEvent)
         {
             var argumentsAsJson = traceEvent.PayloadByName("ArgumentsJson")?.ToString();
             var arguments = JsonSerializer.Deserialize<Dictionary<string, string>>(argumentsAsJson);
             var httpMethod = arguments["HttpMethod"];
             var uri = arguments["Uri"];
+
+            return new RequestPipelineStartEvent
+            {
+                EventKey = traceEvent.ActivityID.ToString(),
+                HttpMethod = httpMethod,
+                Uri = uri
+            };
         }
 
         /// <summary>
         /// eventId 102 - eventName RequestPipelineRequestHeader
         /// </summary>
         /// <param name="traceEvent"></param>
-        public static void ParseRequestPipelineRequestHeader(TraceEvent traceEvent)
+        public static RequestPipelineRequestHeaderEvent ParseRequestPipelineRequestHeader(TraceEvent traceEvent)
         {
             var headersAsText = traceEvent.PayloadByName("FormattedMessage")?.ToString();
 
             var result = ParseHeaders(headersAsText);
+
+            return new RequestPipelineRequestHeaderEvent
+            {
+                EventKey = traceEvent.ActivityID.ToString(),
+                Headers = result
+            };
         }
 
         /// <summary>
         /// eventId 101 - eventName RequestPipelineEnd
         /// </summary>
         /// <param name="traceEvent"></param>
-        public static void ParseRequestPipelineEnd(TraceEvent traceEvent)
+        public static RequestPipelineEndEvent ParseRequestPipelineEnd(TraceEvent traceEvent)
         {
             var argumentsAsJson = traceEvent.PayloadByName("ArgumentsJson")?.ToString();
             var arguments = JsonSerializer.Deserialize<Dictionary<string, string>>(argumentsAsJson);
             var elapsedMilliseconds = arguments["ElapsedMilliseconds"];
             var statusCode = arguments["StatusCode"];
+
+            // parse from milisecond to TimeSpan
+            return new RequestPipelineEndEvent
+            {
+                EventKey = traceEvent.ActivityID.ToString(),
+                ElapsedMilliseconds = TimeSpan.FromMilliseconds(double.Parse(elapsedMilliseconds.ToString())),
+                StatusCode = int.Parse(statusCode)
+            };
         }
 
         /// <summary>
         /// eventId 103 - eventName RequestPipelineResponseHeader
         /// </summary>
         /// <param name="traceEvent"></param>
-        public static void ParseRequestPipelineResponseHeader(TraceEvent traceEvent)
+        public static RequestPipelineResponseHeaderEvent ParseRequestPipelineResponseHeader(TraceEvent traceEvent)
         {
             var headersAsText = traceEvent.PayloadByName("FormattedMessage")?.ToString();
-            
+
             var result = ParseHeaders(headersAsText);
+
+            return new RequestPipelineResponseHeaderEvent
+            {
+                EventKey = traceEvent.ActivityID.ToString(),
+                Headers = result
+            };
         }
 
-        private static string ParseHeaders(string headersAsText)
+        private static Dictionary<string, string> ParseHeaders(string headersAsText)
         {
             var headers = headersAsText.Split('\n').Skip(1);
             var headersDictionary = new Dictionary<string, string>();
@@ -106,7 +140,7 @@ namespace Poc.Sl.LoggerApp
                 var value = header.Substring(deviderIndex + 1);
                 headersDictionary.Add(key, value);
             }
-            return JsonSerializer.Serialize(headersDictionary);
+            return headersDictionary;
         }
     }
 }

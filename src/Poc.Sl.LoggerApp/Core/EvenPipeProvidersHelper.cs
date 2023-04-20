@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Poc.Sl.LoggerApp
+namespace Poc.Sl.LoggerApp.Core
 {
     internal static class EvenPipeProvidersHelper
     {
@@ -17,10 +17,11 @@ namespace Poc.Sl.LoggerApp
                 // Required providers:
                 // 1. Microsoft-Extensions-Logging
                 // 2. System.Threading.Tasks.TplEventSource
+                // 263882790666248 -> for json result
                 new EventPipeProvider(
                     "Microsoft-Extensions-Logging",
                     EventLevel.LogAlways,
-                    long.MaxValue),
+                    263882790666248),
                 new EventPipeProvider(
                     "System.Threading.Tasks.TplEventSource",
                     EventLevel.LogAlways,
