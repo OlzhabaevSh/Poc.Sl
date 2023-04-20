@@ -9,6 +9,10 @@ namespace Poc.Sl.LoggerApp.AspnetCores
 {
     internal class ResponseLogEvent : BaseEvent
     {
+        public override string CategoryName => "AspnetCore";
+
+        public override string EventName => nameof(ResponseLogEvent);
+
         public int StatusCode { get; set; }
 
         public string? ContentType { get; set; }

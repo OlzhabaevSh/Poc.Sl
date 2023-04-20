@@ -37,8 +37,14 @@ namespace Poc.Sl.LoggerApp.AspnetCores
                 be = ParseRequestBody(traceEvent);
             else if (eventId == 4)
                 be = ParseRequestBody(traceEvent);
+            else
+                be = null;
 
             // send notification
+            if (be != null)
+            {
+                EventObserver.Instance.AddEvent(be);
+            }
         }
 
         /// <summary>
@@ -62,7 +68,6 @@ namespace Poc.Sl.LoggerApp.AspnetCores
             arguments.Remove("Path", out var path);
 
             // all other is headers or metadata
-
             // create event
             return new RequestLogEvent
             {

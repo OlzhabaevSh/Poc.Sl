@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -10,7 +11,7 @@ using Poc.Sl.LoggerApp.HttpClients;
 
 namespace Poc.Sl.LoggerApp.Core
 {
-    internal static class TraceEventParserHelper
+    internal static class TraceEventHelper
     {
         public static void Parse(TraceEvent traceEvent)
         {
@@ -29,14 +30,12 @@ namespace Poc.Sl.LoggerApp.Core
                 && loggerName.Contains(HttpClientEventParserHelper.LoggerNameEnd)
                 && traceEvent.EventName == HttpClientEventParserHelper.EventName)
             {
-                Console.WriteLine($"{traceEvent.Keywords} | {loggerName}");
                 HttpClientEventParserHelper.Parse(traceEvent);
             }
             else if (FeatureFlags.UseAspnetCore
                 && loggerName == AspnetCoreEventParserHelper.LoggerName
                 && traceEvent.EventName == AspnetCoreEventParserHelper.EventName)
             {
-                Console.WriteLine($"{traceEvent.Keywords} | {loggerName}");
                 AspnetCoreEventParserHelper.Parse(traceEvent);
             }
         }

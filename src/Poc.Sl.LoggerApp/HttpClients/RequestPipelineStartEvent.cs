@@ -9,6 +9,10 @@ namespace Poc.Sl.LoggerApp.HttpClients
 {
     internal class RequestPipelineStartEvent : BaseEvent
     {
+        public override string CategoryName => "HttpClient";
+
+        public override string EventName => nameof(RequestPipelineStartEvent);
+
         public string HttpMethod { get; set; }
 
         public string Uri { get; set; }

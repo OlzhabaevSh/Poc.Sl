@@ -9,6 +9,10 @@ namespace Poc.Sl.LoggerApp.HttpClients
 {
     internal class RequestPipelineResponseHeaderEvent : BaseEvent
     {
+        public override string CategoryName => "HttpClient";
+
+        public override string EventName => nameof(RequestPipelineResponseHeaderEvent);
+
         public Dictionary<string, string> Headers { get; set; }
     }
 }

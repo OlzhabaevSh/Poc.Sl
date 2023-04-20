@@ -9,6 +9,10 @@ namespace Poc.Sl.LoggerApp.AspnetCores
 {
     internal class ResponseBodyEvent : BaseEvent
     {
+        public override string CategoryName => "AspnetCore";
+
+        public override string EventName => nameof(ResponseBodyEvent);
+
         public string BodyAsString { get; set; }
 
         public Dictionary<string, string> Metadata { get; set; }

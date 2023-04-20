@@ -7,27 +7,30 @@ using System.Diagnostics.Tracing;
 using System.Text.Json;
 
 // get process by name
-var process = ProcessHelper.GetProcessId(ProcessHelper.ProcessName);
+var processId = ProcessHelper.GetProcessId(ProcessHelper.ProcessName);
 
-if (!process.HasValue) 
+if (!processId.HasValue) 
 {
     Console.WriteLine($"Process '{ProcessHelper.ProcessName}' is not started");
     return;
 }
 
-// prepare providers
-var providers = EvenPipeProvidersHelper.GetProviders();
-
 // configure event source
-var client = new DiagnosticsClient(process.Value);
+var eventObserver = EventObserver.Instance;
+var consoleConsumer = new ConsoleConsumer();
+using var consoleSubscribeDisposable = eventObserver.Subscribe(consoleConsumer);
+
+// prepare providers and configure event source
+var providers = EvenPipeProvidersHelper.GetProviders();
+var client = new DiagnosticsClient(processId.Value);
 using EventPipeSession session = client.StartEventPipeSession(providers, false);
 using var source = new EventPipeEventSource(session.EventStream);
-
-source.Dynamic.All += TraceEventParserHelper.Parse;
+source.Dynamic.All += TraceEventHelper.Parse;
 
 // run
 try 
 {
+    Console.WriteLine($"Started: {processId.Value}");
     source.Process();
 }
 catch (Exception ex) 

@@ -48,8 +48,14 @@ namespace Poc.Sl.LoggerApp.HttpClients
                 be = ParseRequestPipelineRequestHeader(traceEvent);
             else if (eventId == 103)
                 be = ParseRequestPipelineResponseHeader(traceEvent);
+            else
+                be = null;
 
             // send notification
+            if(be != null) 
+            {
+                EventObserver.Instance.AddEvent(be);
+            }
         }
 
         /// <summary>
